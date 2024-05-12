@@ -16,9 +16,9 @@ public enum SuccessInfo {
 	GET_MEMBER_FOR_INVITE("회원 조회가 완료되었습니다."), 
 	VALID_EMAIL("사용가능한 이메일입니다."),
 
-
 	GET_MY_SCHEDULE_LIST("내 일정 목록 조회가 완료되었습니다."),
     GET_SCHEDULE_CATEGORY("일정 카테고리 조회가 완료되었습니다."),
+	GET_SCHEDULE_DETAIL("일정 상세 조회가 완료되었습니다."),
 	CREATE_SCHEDULE("내 일정 생성이 완료되었습니다."),
 	CREATE_GROUP_SCHEDULE("모임 일정 생성이 완료되었습니다."),
 	DELETE_SCHEDULE("일정 삭제가 완료되었습니다."),

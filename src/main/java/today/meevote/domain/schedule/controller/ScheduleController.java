@@ -126,11 +126,21 @@ public class ScheduleController {
 		return new BaseResponse(SuccessInfo.CREATE_GROUP_SCHEDULE);
 	}
 
-	@Operation(summary = "일정 상세조회(미완)")
+	@Operation(summary = "일정 상세조회")
+	@ApiResponse(responseCode = "1", description = "성공")
+	@ApiResponse(responseCode = "2", description = "실패",
+			content = @Content(examples = {
+					@ExampleObject(name = "존재하지않는 일정", value = "{\"isSuccess\": false, \"code\": \"S02\", \"message\": \"존재하지 않는 일정입니다.\"}"),
+					@ExampleObject(name = "인증되지않은 요청", value = "{\"isSuccess\": false, \"code\": \"Z97\", \"message\": \"인증되지않은 요청입니다.\"}"),
+					@ExampleObject(name = "내부 서버 오류", value = "{\"isSuccess\": false, \"code\": \"Z99\", \"message\": \"서버 오류가 발생했습니다.\"}")
+			}))
 	@GetMapping("/detail")
-	public DataResponse<GetScheduleDetailDto> getScheduleDetail(long scheduleId){
-		// 확정된 일정
-		return null;
+	public DataResponse<GetScheduleDetailDto> getScheduleDetail(
+			@Schema(description = "스케줄 id", defaultValue = "1")
+			@Min(value = 1, message = "스케줄 id값을 확인해주세요.")
+			long scheduleId){
+		return new DataResponse<>(SuccessInfo.GET_SCHEDULE_DETAIL,
+				scheduleService.getScheduleDetail(scheduleId));
 	}
 
 	@Operation(summary = "지난 일정목록 조회(미완)")
@@ -161,6 +171,7 @@ public class ScheduleController {
 	@Operation(summary = "일정에 회원 초대하기(미완)")
 	@PostMapping("/invite")
 	public BaseResponse inviteMember(InviteMemberDto inviteMemberDto){
+		// 한명씩 초대
 		return null;
 	}
 

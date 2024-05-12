@@ -2,6 +2,7 @@ package today.meevote.domain.schedule.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,6 +12,8 @@ import today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto;
 import today.meevote.domain.schedule.dto.request.CreatePersonalScheduleDto;
 import today.meevote.domain.schedule.dto.response.GetMyScheduleListDto;
 import today.meevote.domain.schedule.dto.response.GetScheduleCategoryDto;
+import today.meevote.domain.schedule.dto.response.ScheduleDetailInfoDto;
+import today.meevote.domain.schedule.dto.response.ScheduleMemberDto;
 
 @Mapper
 public interface ScheduleDao {
@@ -47,4 +50,8 @@ public interface ScheduleDao {
 	public void createGroupMemberSchedule(Map<String, Object> dto);
 
 	public int isExistGroupMember(CreateGroupScheduleDto createGroupScheduleDto);
+
+    public Optional<ScheduleDetailInfoDto> getScheduleDetailInfoDto(String email, long scheduleId);
+
+	public List<ScheduleMemberDto> getScheduleMemberDtoList(long scheduleId);
 }

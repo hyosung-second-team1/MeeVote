@@ -169,4 +169,50 @@
 		SELECT * FROM DUAL
 	</insert>
 
+	<select id="getScheduleDetailInfoDto">
+		SELECT
+			s.schedule_id,
+			sc.schedule_category_id,
+			sc.category_name,
+			sc.color,
+			s.name,
+			s.description,
+			TO_CHAR(s.start_date, 'YYYY-MM-DD HH24:MI') AS startDate,
+			TO_CHAR(s.end_date, 'YYYY-MM-DD HH24:MI') AS endDate,
+			s.is_group,
+			sp.place_name,
+			sp.lat,
+			sp.lng,
+			ms.is_owner AS isRequesterOwner
+		FROM
+			member_schedule ms
+				JOIN schedule s ON ms.schedule_id = s.schedule_id
+				JOIN schedule_category sc ON s.schedule_category_id = sc.schedule_category_id
+				LEFT JOIN schedule_place sp ON s.schedule_id = sp.schedule_id
+		WHERE
+			ms.email = #{email}
+		  AND s.schedule_id = #{scheduleId}
+		  AND (
+		      s.is_group = 0 OR
+		      (s.is_group != 0 AND s.vote_deadline &lt; SYSDATE))
+	</select>
+
+	<select id="getScheduleMemberDtoList">
+		SELECT
+			m.email,
+			m.name,
+			m.address,
+			m.img_src,
+			ms.is_owner,
+			dp.place_name AS departure_place_name,
+			dp.lat AS departure_lat,
+			dp.lng AS departure_lng
+		FROM
+			member m
+				JOIN member_schedule ms ON m.email = ms.email
+				LEFT JOIN departure_place dp ON ms.email = dp.email AND ms.schedule_id = dp.schedule_id
+		WHERE ms.schedule_id = #{scheduleId}
+		ORDER BY ms.is_owner DESC
+	</select>
+
 </mapper>

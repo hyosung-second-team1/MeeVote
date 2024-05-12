@@ -15,8 +15,8 @@ import today.meevote.contextholder.MemberContextHolder;
 import today.meevote.domain.schedule.dao.ScheduleDao;
 import today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto;
 import today.meevote.domain.schedule.dto.request.CreatePersonalScheduleDto;
-import today.meevote.domain.schedule.dto.response.GetMyScheduleListDto;
-import today.meevote.domain.schedule.dto.response.GetScheduleCategoryDto;
+import today.meevote.domain.schedule.dto.response.*;
+import today.meevote.domain.voting_schedule.dto.response.VotingScheduleInfoDto;
 import today.meevote.exception.rest.RestException;
 import today.meevote.response.FailureInfo;
 import today.meevote.utils.DateUtil;
@@ -33,18 +33,13 @@ public class ScheduleService {
         if (!scheduleDao.isExistByEmail(email)) {
             throw new RestException(FailureInfo.NOT_EXIST_MEMBER);
         }
-        
         if (!scheduleDao.isCategoryExist(dto.getScheduleCategoryId())) {
             throw new RestException(FailureInfo.NOT_EXIST_CATEGORY);
         }
 
-        if (!DateUtil.validateDateOrder(dto.getStartDate(), dto.getEndDate())) {
-            throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
-        }
-
+        DateUtil.validateDateOrder(dto.getStartDate(), dto.getEndDate());
         Map<String, Object> params = new HashMap<>();
         params.put("dto", dto);
-
         scheduleDao.createPersonalSchedule(params);
         Long scheduleId = (Long) params.get("id");
         scheduleDao.createMemberSchedule(email, scheduleId);
@@ -77,23 +72,36 @@ public class ScheduleService {
     @Transactional
     public void createGroupSchedule(CreateGroupScheduleDto createGroupScheduleDto) {
         String email = MemberContextHolder.getEmail();
-        if (scheduleDao.isExistGroupMember(createGroupScheduleDto)
-                != createGroupScheduleDto.getInviteEmailList().size()
-            || !scheduleDao.isExistByEmail(email)
+        if (scheduleDao.isExistGroupMember(createGroupScheduleDto) != createGroupScheduleDto.getInviteEmailList().size()
+                || !scheduleDao.isExistByEmail(email)
         ) {
             throw new RestException(FailureInfo.NOT_EXIST_MEMBER);
         }
         if (!scheduleDao.isCategoryExist(createGroupScheduleDto.getScheduleCategoryId())) {
             throw new RestException(FailureInfo.NOT_EXIST_CATEGORY);
         }
-        if (!DateUtil.validateDateOrder(createGroupScheduleDto.getStartDate(), createGroupScheduleDto.getEndDate())) {
-            throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
-        }
+        DateUtil.validateDateOrder(
+                createGroupScheduleDto.getStartDate(),
+                createGroupScheduleDto.getEndDate(),
+                createGroupScheduleDto.getVoteDeadline());
 
         Map<String, Object> params = new HashMap<>();
         params.put("dto", createGroupScheduleDto);
         params.put("ownerEmail", email);
         scheduleDao.createGroupSchedule(params);
         scheduleDao.createGroupMemberSchedule(params);
+    }
+
+    public GetScheduleDetailDto getScheduleDetail(long scheduleId) {
+        String email = MemberContextHolder.getEmail();
+        ScheduleDetailInfoDto scheduleDetailInfoDto = scheduleDao.getScheduleDetailInfoDto(email, scheduleId)
+                .orElseThrow(() -> new RestException(FailureInfo.NOT_EXIST_SCHEDULE));
+
+        List<ScheduleMemberDto> memberList = scheduleDao.getScheduleMemberDtoList(scheduleId);
+
+        return GetScheduleDetailDto.builder()
+                .scheduleDetailInfo(scheduleDetailInfoDto)
+                .memberList(memberList)
+                .build();
     }
 }
