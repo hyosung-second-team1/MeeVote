@@ -24,5 +24,4 @@ public class GetScheduleListDto {
     private String placeName;
     @Schema(description = "모임 일정 여부", defaultValue = "true")
     private Boolean isGroup;
-
 }

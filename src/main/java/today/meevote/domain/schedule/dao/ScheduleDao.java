@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto;
 import today.meevote.domain.schedule.dto.request.CreatePersonalScheduleDto;
 import today.meevote.domain.schedule.dto.response.*;
@@ -17,7 +18,7 @@ public interface ScheduleDao {
 	
 	public boolean isExistByEmail(String email);
 	
-	public boolean isCategoryExist(int categoryId);
+	public boolean isCategoryExist(long categoryId);
 	
     public void createPersonalSchedule(Map<String, Object> dto);
     
@@ -58,4 +59,8 @@ public interface ScheduleDao {
 
 	public boolean isExistGroupMemberByInfo(String email, long scheduleId);
 	public void outGroupSchedule(String email, long scheduleId);
+
+	public List<GetScheduleListDto> getPastScheduleList(String email, long categoryId, String keyword, Pageable pageable);
+
+	public int countPastScheduleList(long categoryId, String keyword);
 }

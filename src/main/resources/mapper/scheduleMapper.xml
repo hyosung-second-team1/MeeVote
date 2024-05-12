@@ -259,4 +259,58 @@
 		  AND is_owner = 0
 	</delete>
 
+	<select id="getPastScheduleList" parameterType="map">
+		SELECT
+			s.schedule_id,
+			s.name,
+			sc.category_name,
+			sc.color,
+			TO_CHAR(s.start_date, 'YYYY-MM-DD HH24:MI') AS startDate,
+			sp.place_name,
+			s.is_group
+		FROM
+		(
+			SELECT
+				ROW_NUMBER() OVER (ORDER BY s.start_date DESC, s.name ASC) AS rnum,
+				s.schedule_id,
+				s.name,
+				s.schedule_category_id,
+				s.start_date,
+				s.is_group,
+				s.vote_deadline
+			FROM member_schedule ms
+			JOIN schedule s ON ms.schedule_id = s.schedule_id
+			WHERE
+				ms.email = #{email}
+			AND s.end_date &lt; CURRENT_DATE
+			<if test="categoryId != 0">
+				AND s.schedule_category_id = #{categoryId}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND s.name LIKE '%' || #{keyword} || '%'
+			</if>
+		) s
+		JOIN schedule_category sc ON s.schedule_category_id = sc.schedule_category_id
+		LEFT JOIN schedule_place sp ON s.schedule_id = sp.schedule_id
+		WHERE
+			(s.rnum BETWEEN #{pageable.offset} + 1 AND #{pageable.offset} + #{pageable.pageSize})
+		AND (
+			(s.is_group = 0)
+			OR (s.is_group = 1 AND sp.schedule_id IS NOT NULL AND s.vote_deadline &lt; CURRENT_DATE))
+		ORDER BY s.rnum
+	</select>
+
+	<select id="countPastScheduleList" parameterType="map" resultType="int">
+		SELECT COUNT(*)
+		FROM schedule
+		WHERE end_date &lt; CURRENT_DATE
+		<if test="categoryId != 0">
+			AND schedule_category_id = #{categoryId}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND name LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
+
+
 </mapper>

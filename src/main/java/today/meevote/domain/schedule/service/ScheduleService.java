@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,5 +119,15 @@ public class ScheduleService {
         if(!scheduleDao.isExistGroupMemberByInfo(email, scheduleId))
             throw new RestException(FailureInfo.NOT_OUT_MEMBER_SCHEDULE);
         scheduleDao.outGroupSchedule(email, scheduleId);
+    }
+
+    public Page<GetScheduleListDto> getPastScheduleList(long categoryId, String keyword, Pageable pageable) {
+        String email = MemberContextHolder.getEmail();
+        if (!scheduleDao.isCategoryExist(categoryId)) {
+            throw new RestException(FailureInfo.NOT_EXIST_CATEGORY);
+        }
+        List<GetScheduleListDto> schedules = scheduleDao.getPastScheduleList(email, categoryId, keyword, pageable);
+        int total = scheduleDao.countPastScheduleList(categoryId, keyword);
+        return new PageImpl<>(schedules, pageable, total);
     }
 }

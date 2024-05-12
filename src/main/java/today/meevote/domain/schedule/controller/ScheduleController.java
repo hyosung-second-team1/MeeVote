@@ -1,6 +1,7 @@
 package today.meevote.domain.schedule.controller;
 
 import jakarta.validation.constraints.Pattern;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -145,12 +146,20 @@ public class ScheduleController {
 
 	@Operation(summary = "지난 일정목록 조회(미완)")
 	@GetMapping("/past/list")
-	public DataResponse<Page<GetScheduleListDto>> getPastScheduleList(long categoryId, String keyword, Pageable pageable){
+	public DataResponse<Page<GetScheduleListDto>> getPastScheduleList(
+			@Schema(description = "카테고리 id", defaultValue = "1")
+			@Min(value = 1, message = "카테고리 id값을 확인해주세요.")
+			long categoryId,
+			@RequestParam(required = false)
+			@Schema(description = "키워드 검색어", defaultValue = "일정명1")
+			String keyword,
+			@PageableDefault(size = 10)
+			Pageable pageable){
 		// 확정된 지난 일정(endDate가 현재 일시보다 이전일때)
 		// 페이징 처리
 		// 카테고리 아이디, 키워드는 필수아님
 		// 최근순으로 정렬
-		return null;
+		return new DataResponse<>(SuccessInfo.GET_SCHEDULE_CATEGORY, scheduleService.getPastScheduleList(categoryId, keyword, pageable));
 	}
 
 	@Operation(summary = "예정 중인 일정목록 조회")

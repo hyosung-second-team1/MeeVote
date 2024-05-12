@@ -24,7 +24,7 @@ public class CreateGroupScheduleDto {
 
     @Min(value=1, message = "카테고리를 선택해주세요.")
     @Schema(description = "일정 카테고리 ID", defaultValue = "1")
-    private int scheduleCategoryId;
+    private long scheduleCategoryId;
 
     @NotBlank(message = "일정 시작일을 입력해주세요.")
     @Schema(description = "일정 시작일", defaultValue = "2024-05-07 15:00")
