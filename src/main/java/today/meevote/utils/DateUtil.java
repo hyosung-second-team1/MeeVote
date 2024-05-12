@@ -16,16 +16,29 @@ public class DateUtil {
         return dateFormat;
     }
 
-    public static Date parseDate(String dateStr) {
+    public static void validateDateOrder(String startDateStr, String endDateStr) {
+         try {
+            Date startDate = getDateFormat().parse(startDateStr);
+            Date endDate = getDateFormat().parse(endDateStr);
+
+             if (!startDate.before(endDate)) {
+                 throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
+             }
+        } catch (ParseException e) {
+             throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
+        }
+    }
+
+    public static void validateDateOrder(String startDateStr, String endDateStr, String voteDateStr) {
         try {
-            return getDateFormat().parse(dateStr);
+            Date startDate = getDateFormat().parse(startDateStr);
+            Date endDate = getDateFormat().parse(endDateStr);
+            Date voteDate = getDateFormat().parse(voteDateStr);
+            if (!startDate.before(endDate)) {
+                throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
+            }
         } catch (ParseException e) {
             throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
         }
-    }
-    public static boolean validateDateOrder(String startDateStr, String endDateStr) {
-        Date startDate = parseDate(startDateStr);
-        Date endDate = parseDate(endDateStr);
-        return startDate.before(endDate);
     }
 }
