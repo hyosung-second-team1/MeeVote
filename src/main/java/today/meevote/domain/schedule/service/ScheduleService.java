@@ -104,4 +104,9 @@ public class ScheduleService {
                 .memberList(memberList)
                 .build();
     }
+
+    public List<GetScheduleListDto> getFutureScheduleList() {
+        String email = MemberContextHolder.getEmail();
+        return scheduleDao.getFutureScheduleList(email);
+    }
 }

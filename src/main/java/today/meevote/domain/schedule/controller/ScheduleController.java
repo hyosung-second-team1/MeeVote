@@ -153,12 +153,17 @@ public class ScheduleController {
 		return null;
 	}
 
-	@Operation(summary = "예정 중인 일정목록 조회(미완)")
+	@Operation(summary = "예정 중인 일정목록 조회")
+	@ApiResponse(responseCode = "1", description = "성공")
+	@ApiResponse(responseCode = "2", description = "실패",
+			content = @Content(examples = {
+					@ExampleObject(name = "인증되지않은 요청", value = "{\"isSuccess\": false, \"code\": \"Z97\", \"message\": \"인증되지않은 요청입니다.\"}"),
+					@ExampleObject(name = "내부 서버 오류", value = "{\"isSuccess\": false, \"code\": \"Z99\", \"message\": \"서버 오류가 발생했습니다.\"}")
+			}))
 	@GetMapping("/future/list")
 	public DataResponse<List<GetScheduleListDto>> getFutureScheduleList(){
-		//현재에서 가장 가까운 순으로 정렬
-		//확정된 일정
-		return null;
+		return new DataResponse<>(SuccessInfo.GET_FUTURE_SCHEDULE_LIST,
+				scheduleService.getFutureScheduleList());
 	}
 
 	@Operation(summary = "일정 나가기(미완)")

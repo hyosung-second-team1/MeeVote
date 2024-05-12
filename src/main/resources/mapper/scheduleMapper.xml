@@ -194,7 +194,7 @@
 		  AND s.schedule_id = #{scheduleId}
 		  AND (
 		      s.is_group = 0 OR
-		      (s.is_group != 0 AND s.vote_deadline &lt; SYSDATE))
+		      (s.is_group != 0 AND s.vote_deadline &lt; CURRENT_DATE))
 	</select>
 
 	<select id="getScheduleMemberDtoList">
@@ -213,6 +213,32 @@
 				LEFT JOIN departure_place dp ON ms.email = dp.email AND ms.schedule_id = dp.schedule_id
 		WHERE ms.schedule_id = #{scheduleId}
 		ORDER BY ms.is_owner DESC
+	</select>
+
+	<select id="getFutureScheduleList">
+		SELECT
+			s.schedule_id,
+			s.name,
+			sc.category_name,
+			sc.color,
+			TO_CHAR(s.start_date, 'YYYY-MM-DD HH24:MI') AS startDate,
+			sp.place_name,
+			s.is_group
+		FROM
+			member_schedule ms
+				JOIN schedule s ON ms.schedule_id = s.schedule_id
+				JOIN schedule_category sc ON s.schedule_category_id = sc.schedule_category_id
+				LEFT JOIN schedule_place sp ON s.schedule_id = sp.schedule_id
+		WHERE
+			ms.email = #{email}
+			AND (
+				(s.is_group = 0)
+				OR (s.is_group = 1 AND sp.schedule_id IS NOT NULL
+						AND s.vote_deadline &lt; CURRENT_DATE))
+			AND s.start_date &gt; CURRENT_DATE  -- 모임 시작일은 현재 시각보다 미래
+		ORDER BY
+			s.start_date ASC,  -- 가장 가까운 미래 순서로 정렬하기~
+			s.name ASC
 	</select>
 
 </mapper>

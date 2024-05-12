@@ -10,10 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import jakarta.validation.Valid;
 import today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto;
 import today.meevote.domain.schedule.dto.request.CreatePersonalScheduleDto;
-import today.meevote.domain.schedule.dto.response.GetMyScheduleListDto;
-import today.meevote.domain.schedule.dto.response.GetScheduleCategoryDto;
-import today.meevote.domain.schedule.dto.response.ScheduleDetailInfoDto;
-import today.meevote.domain.schedule.dto.response.ScheduleMemberDto;
+import today.meevote.domain.schedule.dto.response.*;
 
 @Mapper
 public interface ScheduleDao {
@@ -54,4 +51,6 @@ public interface ScheduleDao {
     public Optional<ScheduleDetailInfoDto> getScheduleDetailInfoDto(String email, long scheduleId);
 
 	public List<ScheduleMemberDto> getScheduleMemberDtoList(long scheduleId);
+
+    public List<GetScheduleListDto> getFutureScheduleList(String email);
 }
