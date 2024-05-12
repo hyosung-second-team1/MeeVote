@@ -52,12 +52,12 @@ public class ScheduleService {
 	}
 
 	@Transactional
-	public void deletePersonalSchedule(Long scheduleId) {
+	public void deletePersonalSchedule(long scheduleId) {
 		String email = MemberContextHolder.getEmail();
         if (!scheduleDao.isExistScheduleByInfo(email, scheduleId)) {
-            throw new RestException(FailureInfo.NOT_EXIST_SCHEDULE);
+            throw new RestException(FailureInfo.NOT_EXIST_DELETE_SCHEDULE);
         }
-        scheduleDao.deletePersonalSchedule(scheduleId);
+        scheduleDao.deletePersonalSchedule(email, scheduleId);
 	}
 
     public List<GetMyScheduleListDto> getMyScheduleList(Boolean isGroup, String year, String month) {
@@ -89,6 +89,7 @@ public class ScheduleService {
         params.put("dto", createGroupScheduleDto);
         params.put("ownerEmail", email);
         scheduleDao.createGroupSchedule(params);
+        scheduleDao.createOwnerMemberSchedule(params);
         scheduleDao.createGroupMemberSchedule(params);
     }
 
@@ -108,5 +109,12 @@ public class ScheduleService {
     public List<GetScheduleListDto> getFutureScheduleList() {
         String email = MemberContextHolder.getEmail();
         return scheduleDao.getFutureScheduleList(email);
+    }
+
+    public void outGroupSchedule(long scheduleId) {
+        String email = MemberContextHolder.getEmail();
+        if(!scheduleDao.isExistGroupMemberByInfo(email, scheduleId))
+            throw new RestException(FailureInfo.NOT_OUT_MEMBER_SCHEDULE);
+        scheduleDao.outGroupSchedule(email, scheduleId);
     }
 }

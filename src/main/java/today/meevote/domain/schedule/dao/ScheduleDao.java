@@ -25,7 +25,7 @@ public interface ScheduleDao {
 
 	public boolean isExistScheduleByInfo(@Param("email") String email, @Param("scheduleId") long scheduleId);
 
-	public void deletePersonalSchedule(Long scheduleId);
+	public void deletePersonalSchedule(@Param("email")String email, @Param("scheduleId") long scheduleId);
 
 	List<GetMyScheduleListDto> getMyScheduleList(
 			@Param("email")
@@ -44,6 +44,8 @@ public interface ScheduleDao {
 
 	public void createGroupSchedule(Map<String, Object> dto);
 
+	public void createOwnerMemberSchedule(Map<String, Object> dto);
+
 	public void createGroupMemberSchedule(Map<String, Object> dto);
 
 	public int isExistGroupMember(CreateGroupScheduleDto createGroupScheduleDto);
@@ -53,4 +55,7 @@ public interface ScheduleDao {
 	public List<ScheduleMemberDto> getScheduleMemberDtoList(long scheduleId);
 
     public List<GetScheduleListDto> getFutureScheduleList(String email);
+
+	public boolean isExistGroupMemberByInfo(String email, long scheduleId);
+	public void outGroupSchedule(String email, long scheduleId);
 }

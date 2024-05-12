@@ -15,7 +15,6 @@
 		WHERE schedule_category_id =#{categoryId}
 	</select>
 
-
 	<insert id="createPersonalSchedule" parameterType="map">
 	    INSERT INTO Schedule (
 	        schedule_id,
@@ -51,14 +50,17 @@
             1 <!-- isOwner : 1로 설정 -->
         )
     </insert>
-    
-    <select id="isExistScheduleByInfo" resultType="boolean">
-	    SELECT COUNT(*)
+
+	<select id="isExistScheduleByInfo" resultType="boolean">
+		SELECT COUNT(*)
 		FROM member_schedule
-		WHERE email = #{email} AND schedule_id = #{scheduleId} AND is_owner = 1
+		WHERE schedule_id = #{scheduleId}
+		  AND email = #{email}
+		  AND is_owner = 1
 	</select>
 
-	<delete id="deletePersonalSchedule" parameterType="long">
+
+	<delete id="deletePersonalSchedule" parameterType="map">
 	    DELETE FROM schedule
 	    WHERE schedule_id = #{scheduleId}
 	</delete>
@@ -148,13 +150,14 @@
 			TO_DATE(#{dto.endDate}, 'YYYY-MM-DD HH24:MI'),
 			TO_DATE(#{dto.voteDeadline}, 'YYYY-MM-DD HH24:MI')
 		FROM DUAL
-		WHERE EXISTS (
-			SELECT 1 FROM schedule_category
-			WHERE schedule_category_id = #{dto.scheduleCategoryId}
-		)
 		<selectKey keyProperty="id" resultType="long" order="AFTER">
 			SELECT seq_schedule.CURRVAL FROM DUAL
 		</selectKey>
+	</insert>
+
+	<insert id="createOwnerMemberSchedule" parameterType="map">
+		INSERT INTO member_schedule (schedule_id, email, is_owner)
+		VALUES (#{id}, #{ownerEmail}, 1)
 	</insert>
 
 	<insert id="createGroupMemberSchedule">
@@ -163,9 +166,6 @@
 			INTO member_schedule (schedule_id, email, is_owner)
 			VALUES (#{id}, #{email}, 0)
 		</foreach>
-		<!-- 모임장용 insert -->
-		INTO member_schedule (schedule_id, email, is_owner)
-		VALUES (#{id}, #{ownerEmail}, 1)
 		SELECT * FROM DUAL
 	</insert>
 
@@ -240,5 +240,23 @@
 			s.start_date ASC,  -- 가장 가까운 미래 순서로 정렬하기~
 			s.name ASC
 	</select>
+
+	<select id="isExistGroupMemberByInfo" resultType="boolean">
+		SELECT COUNT(*)
+		FROM member_schedule ms
+		    JOIN schedule s
+		        ON ms.schedule_id = s.schedule_id
+		WHERE ms.schedule_id = #{scheduleId}
+		  AND ms.email = #{email}
+		  AND ms.is_owner = 0
+		  AND s.is_group = 1
+	</select>
+
+	<delete id="outGroupSchedule" parameterType="map">
+		DELETE FROM member_schedule
+		WHERE schedule_id = #{scheduleId}
+		  AND email = #{email}
+		  AND is_owner = 0
+	</delete>
 
 </mapper>

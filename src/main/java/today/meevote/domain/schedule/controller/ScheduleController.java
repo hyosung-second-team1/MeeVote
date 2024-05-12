@@ -64,7 +64,7 @@ public class ScheduleController {
 			@Schema(description = "스케줄 id", defaultValue = "1")
 			@Min(value = 1, message = "스케줄 id값을 확인해주세요.")
 			@RequestParam
-			Long scheduleId
+			long scheduleId
 	) {
 		scheduleService.deletePersonalSchedule(scheduleId);
 		return new BaseResponse(SuccessInfo.DELETE_SCHEDULE);
@@ -167,10 +167,20 @@ public class ScheduleController {
 	}
 
 	@Operation(summary = "일정 나가기(미완)")
+	@ApiResponse(responseCode = "1", description = "성공")
+	@ApiResponse(responseCode = "2", description = "실패",
+			content = @Content(examples = {
+					@ExampleObject(name = "나갈 수 없는 일정", value = "{\"isSuccess\": false, \"code\": \"S03\", \"message\": \"삭제가 불가능한 일정입니다. 확인 후 다시 시도해주세요.\"}"),
+					@ExampleObject(name = "인증되지않은 요청", value = "{\"isSuccess\": false, \"code\": \"Z97\", \"message\": \"인증되지않은 요청입니다.\"}"),
+					@ExampleObject(name = "내부 서버 오류", value = "{\"isSuccess\": false, \"code\": \"Z99\", \"message\": \"서버 오류가 발생했습니다.\"}")
+			}))
 	@DeleteMapping("/out")
-	public BaseResponse outSchedule(long scheduleId){
-		// 일정장은 못나감
-		return null;
+	public BaseResponse outSchedule(
+			@Schema(description = "스케줄 id", defaultValue = "1")
+			@Min(value = 1, message = "스케줄 id값을 확인해주세요.")
+			long scheduleId){
+		scheduleService.outGroupSchedule(scheduleId);
+		return new BaseResponse(SuccessInfo.OUT_SCHEDULE);
 	}
 
 	@Operation(summary = "일정에 회원 초대하기(미완)")
