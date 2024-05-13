@@ -1,6 +1,7 @@
 package today.meevote.domain.schedule.controller;
 
 import jakarta.validation.constraints.Pattern;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -166,12 +167,9 @@ public class ScheduleController {
 			@RequestParam(required = false)
 			@Schema(description = "키워드 검색어", defaultValue = "일정명1")
 			String keyword,
+			@ParameterObject
 			@PageableDefault(size = 10)
 			Pageable pageable){
-		// 확정된 지난 일정(endDate가 현재 일시보다 이전일때)
-		// 페이징 처리
-		// 카테고리 아이디, 키워드는 필수아님
-		// 최근순으로 정렬
 		return new DataResponse<>(SuccessInfo.GET_SCHEDULE_CATEGORY, scheduleService.getPastScheduleList(categoryId, keyword, pageable));
 	}
 

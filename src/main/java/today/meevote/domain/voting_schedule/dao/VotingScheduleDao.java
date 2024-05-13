@@ -8,6 +8,7 @@ import today.meevote.domain.voting_schedule.dto.response.PlaceToVoteDto;
 import today.meevote.domain.voting_schedule.dto.response.VotingScheduleInfoDto;
 import today.meevote.domain.voting_schedule.dto.response.VotingScheduleMemberDto;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public interface VotingScheduleDao {
 
     public boolean isDuplicatePlaceToVote(@Param("scheduleId") long scheduleId, @Param("dto") CreatePlaceDto addPlaceToVoteDto);
 
-    public void addPlaceToVote(@Param("scheduleId") long scheduleId, @Param("dto") CreatePlaceDto addPlaceToVoteDto);
+    public void addPlaceToVote(@Param("scheduleId") long scheduleId, @Param("dto") CreatePlaceDto addPlaceToVoteDto); // throws SQLException;
 
     public boolean isExistPlaceToVote(long placeToVoteId);
 
