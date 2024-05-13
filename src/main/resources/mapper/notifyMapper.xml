@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="today.meevote.domain.notify.dao.NotifyDao">
+
+    <select id="getUnreadNotifyCount">
+        SELECT COUNT(*)
+        FROM notify
+        WHERE
+            email = #{email}
+          AND is_read = 0
+    </select>
+
+    <select id="getNotifyList">
+        SELECT
+            n.notify_id,
+            n.email,
+            n.schedule_id,
+            n.notify_category_id,
+            nc.category_name,
+            n.message,
+            n.is_read
+        FROM
+            notify n JOIN notify_category nc
+            ON n.notify_category_id = nc.notify_category_id
+        WHERE
+            n.email = #{email}
+        ORDER BY n.is_read ASC, n.notify_id DESC
+    </select>
+
+    <update id="updateIsRead">
+        UPDATE notify
+        SET
+            is_read = #{isRead}
+        WHERE
+            notify_id = #{notifyId}
+    </update>
+
+    <select id="isExistNotify">
+        SELECT COUNT(*)
+        FROM notify
+        WHERE
+            notify_id= #{notifyId}
+            AND email = #{email}
+    </select>
+
+    <select id="getEmailByNotifyId">
+        select email
+        from notify
+        where notify_id = #{notifyId}
+    </select>
+
+</mapper>

@@ -1,0 +1,323 @@
+body {
+  /* position: relative; */
+  width: 100%;
+  font-family: "Nanum Gothic Coding", monospace;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.map-container {
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+}
+
+/* 장소 검색 */
+.search-container {
+  width: 300px;
+  max-height: 100vh;
+  position: fixed;
+  top: 20px;
+  left: 270px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  z-index: 1;
+  transition: all 0.5s;
+  padding-bottom: 20px;
+}
+/* ---- 검색창 ---- */
+.place-search {
+  width: 100%;
+  padding: 5px 10px;
+  border: 1px solid #BBBBBB;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+}
+
+.place-search > input{
+  width: 90%;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.place-search > input:focus{
+  border: none
+}
+
+.place-search > i{
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.place-search > i:hover{
+  color: #4fd1c5;
+}
+/* ---- 검색창 End ---- */
+
+/* ---- 검색 리스트 ---- */
+.search-list-container { 
+  position: absolute;
+  top:35px;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto; 
+  border: #BBBBBB 1px solid;
+  border-radius: 5px;
+  background-color: white;
+  z-index: 2;
+  display: none;
+}
+
+.search-list-container > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-list-container li{
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.search-list-container p{
+  margin: 0px;
+}
+
+.search-list-container p:first-child{
+  font-size: 14px;
+}
+
+.search-list-container p:nth-child(2){
+  font-size: 12px;
+  color: .414141;
+}
+
+.search-list-container li:hover{
+  background-color: lightgray;
+}
+/* ---- 검색 리스트 End ----*/
+
+/* ---- 검색 장소 오버레이 ---- */
+.search-info-container {
+  display: inline-flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  border: 2px solid #4fd1c5;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: white;
+  gap: 5px;
+  transform: translateY(-120px);
+  z-index: 1;
+}
+
+.search-info-container > p {
+  margin: 0px;
+  font-size: 13px;
+}
+
+.search-info-container > .name {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  gap: 10px;
+}
+
+.search-info-container a {
+  text-decoration: none;
+  color: #4fd1c5;
+}
+
+.search-info-container > .buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-info-container .add-btn {
+  padding: 7px 15px;
+  color: white;
+  background-color: #4fd1c5;
+  font-size: 16px;
+  font-weight: bold;
+  border: 0px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px lightgray;
+}
+
+.search-info-container .add-btn:hover {
+  background-color: #35f2e1;
+  transition: all 0.3s;
+}
+
+.search-info-container i {
+  cursor: pointer;
+  font-size: 24px;
+  transition: all 0.2s;
+}
+
+.search-info-container i:hover {
+  color: #4fd1c5;
+}
+/* ---- 검색 장소 오버레이 End---- */
+
+
+/* ---- 투표 항목 ---- */
+.vote-list-container{
+  max-height: 100%;
+  padding: 20px 0px;
+  overflow-y: auto; 
+  z-index: 1;
+}
+
+.vote-list-container > .vote-list{
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 10px;
+
+}
+
+.vote-list-container .vote-item{
+  width: 300px;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.5);
+  /* background-color: rgb(79, 209, 197, 0.7); */
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.vote-item > .row-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vote-item > .vote-head{
+  font-size: 18px;
+}
+
+
+.vote-item .address{
+  font-size: 12px;
+}
+
+.vote-item > .distance {
+  display: flex;
+  justify-content: space-between;
+}
+
+.vote-item .transporter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.vote-item .vote-number {
+  width: 35px;
+  height: 35px;
+  background-color: #4fd1c5;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: auto;
+}
+
+.vote-item img{
+  width: 50px;
+  height: 50px;
+}
+
+.vote-item p{
+  margin: 0;
+  padding: 0;
+}
+
+.vote-item span {
+  text-align: center;
+}
+
+.vote-item i{
+  border-radius: 50%;
+  transition: all 0.2s;
+  font-size: 30px;
+  cursor: pointer;
+  color: white;
+}
+
+.fee > span {
+  font-size: 15px;
+}
+
+.vote-item i::before {
+  border-radius: 50%;
+  border: 1px solid #4fd1c5;
+}
+
+.vote-item i:hover {
+  cursor: pointer;
+  color: #4fd1c5
+}
+
+.vote-item.choosed i {
+  color: #4fd1c5;
+}
+
+.vote-item.choosed i:hover {
+  color: white;
+}
+
+.vote-list-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.vote-list-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}
+/* ---- 투표 항목 End---- */
+
+
+/* 기타 버튼들 */
+.del-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  padding: 7px 15px;
+  color: white;
+  background-color: tomato;
+  font-size: 16px;
+  font-weight: bold;
+  border: 0px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px lightgray;
+  z-index: 1;
+  transition: all 0.3s;
+}
+
+.del-btn:hover{
+  background-color: crimson;
+}
+/* 기타 버튼들 End */
+
+@media (max-width: 800px) {
+  
+  .search-container {
+    width: 250px;
+    top: 20px;
+    left: 100px;
+  }
+}

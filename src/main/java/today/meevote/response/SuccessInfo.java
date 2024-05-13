@@ -36,7 +36,11 @@ public enum SuccessInfo {
 	DELETE_DEPARTURE_PLACE("내 출발지 삭제가 완료되었습니다."),
 	CONFIRM_PLACE("장소 확정을 완료하였습니다."),
 
-	;
+    GET_UNREAD_NOTIFY_COUNT("안읽은 알림 개수 조회가 완료되었습니다."),
+
+	GET_NOTIFY_LIST("알림 목록 조회가 완료되었습니다."),
+
+	READ_NOTIFY("알림 읽기 처리가 완료되었습니다.");
     private final String code = "A00";
     private final String message;
 }

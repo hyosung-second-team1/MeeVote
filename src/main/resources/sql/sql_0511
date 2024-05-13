@@ -1,0 +1,57 @@
+ALTER TABLE member_schedule DROP CONSTRAINT FK_m_TO_m_s_1;
+ALTER TABLE member_schedule DROP CONSTRAINT FK_s_TO_m_s_1;
+ALTER TABLE place_voted DROP CONSTRAINT FK_m_s_TO_p_v_1;
+ALTER TABLE place_voted DROP CONSTRAINT FK_p_t_v_TO_p_v_1;
+ALTER TABLE notify DROP CONSTRAINT FK_m_s_TO_n_1;
+ALTER TABLE schedule_place DROP CONSTRAINT FK_s_TO_s_p_1;
+ALTER TABLE departure_place DROP CONSTRAINT FK_m_s_TO_d_p_1;
+ALTER TABLE member_schedule ADD CONSTRAINT FK_m_TO_m_s_1 FOREIGN KEY (
+    email
+)
+REFERENCES member (
+    email
+) ON DELETE CASCADE;
+ALTER TABLE member_schedule ADD CONSTRAINT FK_s_TO_m_s_1 FOREIGN KEY (
+    schedule_id
+)
+REFERENCES schedule (
+    schedule_id
+) ON DELETE CASCADE;
+ALTER TABLE place_voted ADD CONSTRAINT FK_m_s_TO_p_v_1 FOREIGN KEY (
+    email, schedule_id
+)
+REFERENCES member_schedule (
+    email, schedule_id
+) ON DELETE CASCADE;
+ALTER TABLE place_voted ADD CONSTRAINT FK_p_t_v_TO_p_v_1 FOREIGN KEY (
+    place_to_vote_id
+)
+REFERENCES place_to_vote (
+    place_to_vote_id
+) ON DELETE CASCADE;
+ALTER TABLE notify ADD CONSTRAINT FK_m_s_TO_n_1 FOREIGN KEY (
+    email, schedule_id
+)
+REFERENCES member_schedule (
+    email, schedule_id
+) ON DELETE CASCADE;
+ALTER TABLE schedule_place ADD CONSTRAINT FK_s_TO_s_p_1 FOREIGN KEY (
+    schedule_id
+)
+REFERENCES schedule (
+    schedule_id
+) ON DELETE CASCADE;
+ALTER TABLE departure_place ADD CONSTRAINT FK_m_s_TO_d_p_1 FOREIGN KEY (
+    email, schedule_id
+)
+REFERENCES member_schedule (
+    email, schedule_id
+) ON DELETE CASCADE;
+
+ALTER TABLE place_to_vote DROP CONSTRAINT FK_s_TO_p_t_v_1;
+ALTER TABLE place_to_vote ADD CONSTRAINT FK_s_TO_p_t_v_1 FOREIGN KEY (
+	schedule_id
+)
+REFERENCES schedule (
+	schedule_id
+)ON DELETE CASCADE;

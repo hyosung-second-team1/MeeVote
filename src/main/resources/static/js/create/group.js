@@ -1,4 +1,4 @@
-import { getMyInfo } from '/js/module/memberFunc.js';
+import { getMyInfo } from '/js/module/ajax.js';
 
 // 변수
 // ---- 달력 관련 변수 ----
@@ -226,6 +226,7 @@ $('#start-date').change(function (e) {
 	}
 	else if (startDate > endDate) {
 		endDate = new Date(startDate);
+		endDate.setMinutes(endDate.getMinutes() + 1)
 		dateToInput('#end-date', endDate);
 		timeToInput('#end-time', endDate);
 	}
@@ -238,6 +239,7 @@ $('#start-time').change(function (e) {
 	// 시작 날짜 종료 날짜보다 크면 종료 날짜 자동 조정
 	if (startDate > endDate) {
 		endDate = new Date(startDate);
+		endDate.setMinutes(endDate.getMinutes() + 1)
 		dateToInput('#end-date', endDate);
 		timeToInput('#end-time', endDate);
 	}
@@ -249,6 +251,7 @@ $('#end-date').change(function (e) {
 	// 시작 날짜가 종료 날짜보다 크면 시작 날짜 자동 조정
 	if (startDate > endDate) {
 		startDate = new Date(endDate);
+		startDate.setMinutes(startDate.getMinutes() - 1)
 		dateToInput('#start-date', startDate);
 		timeToInput('#start-time', startDate);
 	}
@@ -260,6 +263,7 @@ $('#end-time').change(function (e) {
 	// 시작 날짜가 종료 날짜보다 크면 시작 날짜 자동 조정
 	if (startDate > endDate) {
 		startDate = new Date(endDate);
+		startDate.setMinutes(startDate.getMinutes() - 1)
 		dateToInput('#start-date', startDate);
 		timeToInput('#start-time', startDate);
 	}
@@ -338,6 +342,14 @@ $('#save-btn').click(function(e) {
     $('.input-warning').css('display','block');
     return;
   }
+	// 초대 회원 검증
+	if (!memberList.length) {
+		$('#name-serach > input').focus();
+		$('.input-warning').text('함께할 회원을 초대해주세요!');
+		$('.input-warning').css('display','block');
+		return;
+	}
+	
 
 	// 보낼 데이터 선언
 	const data = {
@@ -346,8 +358,8 @@ $('#save-btn').click(function(e) {
 		"scheduleCategoryId": choosedCategory.scheduleCategoryId,
 		"startDate": `${$('#start-date').val()} ${$('#start-time').val()}`,
 		"endDate": `${$('#end-date').val()} ${$('#end-time').val()}`,
+		"inviteEmailList": memberList,
 		"voteDeadline": `${$('#vote-date').val()} ${$('#vote-time').val()}`,
-		"inviteEmailList": [myInfo.email, ...memberList],
 	}
 
 	// api 요청
@@ -359,7 +371,9 @@ $('#save-btn').click(function(e) {
 		data: JSON.stringify(data),
 		success: function (response) {
 			if (!response.isSuccess) {
-				// 예외 처리
+				// 요청 실패 예외 처리
+				console.log(response);
+				return;
 			} 
 			// 일정 생성 성공
 			$('.top-container').css('display', 'none');
@@ -383,7 +397,7 @@ $('#save-btn').click(function(e) {
 startDate.setDate(startDate.getDate() + 7); // 시작 시간은 현재 + 일주일
 dateToInput('#start-date', startDate);
 timeToInput('#start-time', startDate);
-endDate.setDate(endDate.getDate() + 7);  // 종료 시간은 현재 + 일주일
+endDate.setDate(endDate.getDate() + 8);  // 종료 시간은 현재 + 일주일
 dateToInput('#end-date', endDate);
 timeToInput('#end-time', endDate);
 voteDate.setDate(voteDate.getDate() + 3);  // 투표 마감 시간은 현재 + 3일

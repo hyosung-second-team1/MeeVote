@@ -35,6 +35,11 @@ public class ViewController {
 	public String createGroupSchedule() {
 		return "create/group";
 	}
+
+	@GetMapping("/vote")
+	public String vote() {
+		return "vote/vote";
+	}
 	
 	
 	@GetMapping("/register")

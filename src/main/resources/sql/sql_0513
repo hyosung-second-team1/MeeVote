@@ -1,0 +1,86 @@
+INSERT INTO notify_category VALUES(seq_notify_category.NEXTVAL, '모임 일정 초대');
+INSERT INTO notify_category VALUES(seq_notify_category.NEXTVAL, '모임 일정 장소 확정');
+INSERT INTO notify_category VALUES(seq_notify_category.NEXTVAL, '일정 예고');
+commit;
+
+create or replace PROCEDURE confirm_place AS
+BEGIN
+    FOR schedule_rec IN (
+        SELECT s.schedule_id, s.vote_deadline
+        FROM schedule s
+        WHERE s.is_group = 1
+        AND NOT EXISTS (
+            SELECT 1 FROM schedule_place sp WHERE sp.schedule_id = s.schedule_id
+        )
+        AND TO_CHAR(s.vote_deadline, 'YYYY-MM-DD HH24:MI') = TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI')
+    ) LOOP
+        INSERT INTO schedule_place (schedule_id, place_name, lat, lng)
+        SELECT p.schedule_id, p.place_name, p.lat, p.lng
+        FROM(
+            select ptv.schedule_id, ptv.place_name, ptv.lat, ptv.lng, NVL(pv.count, 0) as vote_count
+            from place_to_vote ptv left join(
+                select place_to_vote_id, count(*) as count
+                from place_voted
+                group by place_to_vote_id
+            ) pv on ptv.place_to_vote_id = pv.place_to_vote_id
+            where ptv.schedule_id = schedule_rec.schedule_id
+            order by vote_count desc
+        ) p WHERE ROWNUM = 1;
+        IF SQL%ROWCOUNT > 0 THEN
+            FOR member_rec IN (
+                SELECT ms.email, s.name AS schedule_name
+                FROM member_schedule ms
+                JOIN schedule s ON ms.schedule_id = s.schedule_id
+                WHERE ms.schedule_id = schedule_rec.schedule_id
+            ) LOOP
+                INSERT INTO notify (notify_id, email, schedule_id, notify_category_id, message, is_read)
+                VALUES (seq_notify.NEXTVAL, member_rec.email, schedule_rec.schedule_id, 2, '[' || member_rec.schedule_name || '] 모임 일정 장소가 확정되었습니다.', 0);
+            END LOOP;
+        END IF;
+    END LOOP;
+END;
+
+
+
+BEGIN
+    DBMS_SCHEDULER.CREATE_JOB(
+        job_name        => 'confirm_place_job',
+        job_type        => 'PLSQL_BLOCK',
+        job_action      => 'BEGIN confirm_place; END;',
+        start_date      => TRUNC(SYSDATE + INTERVAL '1' MINUTE, 'MI'),
+        repeat_interval => 'FREQ=MINUTELY',
+        enabled         => TRUE
+    );
+END;
+
+
+
+CREATE OR REPLACE PROCEDURE schedule_reminder AS
+BEGIN
+    FOR schedule_rec IN (
+        SELECT s.schedule_id, s.name, ms.email, s.start_date
+        FROM schedule s
+        JOIN member_schedule ms ON s.schedule_id = ms.schedule_id
+        WHERE (s.is_group = 0 OR (s.is_group = 1 AND EXISTS (SELECT 1 FROM schedule_place sp WHERE sp.schedule_id = s.schedule_id)))
+        AND TRUNC(s.start_date) - 1 = TRUNC(SYSDATE)
+    )
+    LOOP
+        INSERT INTO notify (notify_id, email, schedule_id, notify_category_id, message, is_read)
+        VALUES (seq_notify.nextval, schedule_rec.email, schedule_rec.schedule_id, 3,
+                '일정 [' || schedule_rec.name || '] 이 내일 ' || TO_CHAR(schedule_rec.start_date, 'HH24:MI') || '에 예정되어 있습니다.', 0);
+    END LOOP;
+    COMMIT;
+END schedule_reminder;
+
+
+
+BEGIN
+    DBMS_SCHEDULER.CREATE_JOB(
+        job_name        => 'schedule_reminder_job',
+        job_type        => 'STORED_PROCEDURE',
+        job_action      => 'schedule_reminder',
+        start_date      => SYSTIMESTAMP,
+        repeat_interval => 'FREQ=DAILY; BYHOUR=20; BYMINUTE=0; BYSECOND=0;',
+        enabled         => TRUE
+    );
+END;

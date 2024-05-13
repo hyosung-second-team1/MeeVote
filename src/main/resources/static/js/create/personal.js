@@ -258,7 +258,6 @@ $('#search-container > input').on('input', function(e){
 		})
 		// 장소 목록 표시
 		$('#search-list-container').css('display', 'block');
-		console.log($('#search-list').children());
 	}, 700);
 })
 // ---- 이벤트 등록 : 장소 검색 End----

@@ -58,7 +58,7 @@ public interface ScheduleDao {
     public List<GetScheduleListDto> getFutureScheduleList(String email);
 
 	public boolean isExistGroupMemberByInfo(String email, long scheduleId);
-	public void outGroupSchedule(String email, long scheduleId);
+	public void outGroupSchedule(@Param("email") String email, @Param("scheduleId") long scheduleId);
 
 	public List<GetScheduleListDto> getPastScheduleList(String email, long categoryId, String keyword, Pageable pageable);
 

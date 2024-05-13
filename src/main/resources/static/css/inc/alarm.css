@@ -1,0 +1,200 @@
+
+#alarmIcon {
+    position: fixed;
+    top: 1.2%;
+    right: 1.2%;
+    z-index: 9999;
+    font-size: 1.6rem;
+    padding: .1rem .55rem;
+    background-color: #4FD1C5;
+    color: #ffffff;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+
+
+#alarmIcon.active-icon {
+    background-color: #ffffff;
+    color: #4FD1C5;
+    border-radius: .1rem;
+    z-index: 9999;
+
+}
+
+.overlay-container {
+    display: none;
+    position: fixed;
+    height: 100vh;
+    top: 1.2%;
+    right: 1.2%;
+    width: 340px;
+    z-index: 50; /* 다른 요소 위에 표시하기 위해 z-index를 설정합니다. */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 가로, 세로, 흐림 정도, 색상 */;
+    /* border-radius: .3rem; */
+     background-color: #ffffff;
+    /* border-color: #4FD1C5; */
+    /* animation: fade-in 450ms; */
+    /* top: calc(100% + 10px); */
+    /* height: 30%; */
+    /* height: calc(100vh - 100px); */
+}
+
+
+
+.msg-overlay-bubble {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 310px;
+    /*box-shadow: left only;*/
+}
+
+.msg-overlay-bubble-header {
+    margin: 0 20px;
+    font-size: large;
+    font-weight: bold;
+    border-bottom: 1px solid;
+
+}
+
+/* 오버레이를 표시합니다. */
+.overlay-container.show-overlay {
+    display: block;
+    width: 310px;
+}
+
+
+.msg-overlay-bubble-list {
+    flex: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 90%;
+    background-color: #ffffff;
+    overflow-y: scroll; /* 세로 스크롤 사용 */
+}
+
+/* 스크롤바 전체 영역 */
+::-webkit-scrollbar {
+    width: 10px;  /* 세로축 스크롤바 폭 너비 */
+    height: 20px;  /* 가로축 스크롤바 폭 너비 */
+}
+
+/* 스크롤바 막대 */
+::-webkit-scrollbar-thumb {
+    background: rgba(83, 166, 249, 0.75);
+    border-radius: 2em;
+    height: 15px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color:#eeeef1;
+}
+
+/* 스크롤이 움직이는 뒷 배경 */
+::-webkit-scrollbar-track {
+    background: rgba(220, 20, 60, .1);  /*스크롤바 뒷 배경 색상*/
+}
+
+/*일정상세카드*/
+.card-outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    /*height: 200px;*/
+    font-size: small;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    /* z-index: 10; */
+    /* padding: 2px, 2px, 2px, 2px; */
+    /* padding-left: 5px; */
+    /* border-style: solid ; */
+    /* border-color: rgb(28, 248, 174); */
+    /* background-color: #ffffff63; */
+    /* left: 10px; */
+}
+
+.card-name {
+    width: 90%;
+    height: 15%;
+    margin: 5px 10px;
+    font-weight: bold;
+}
+
+.card-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: space-between;
+    background-color: #ffffffe2;
+    width: 280px;
+    height: 130px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+}
+
+.card-main-1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 10px;
+    height: 30%;
+}
+
+.card-main-2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 10px;
+    height: 30%;
+}
+
+.card-main-3 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 10px;
+    height: 30%;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+/* .category1 {
+    background-color: rgb(71, 147, 175);
+    border-radius: 5px;
+    font-weight: bold;
+    color: #071241;
+}
+
+.category2 {
+    background-color: rgb(255, 196, 112);
+    border-radius: 5px;
+    font-weight: bold;
+    color: #071241;
+
+}
+
+.category3 {
+    background-color: rgb(221, 87, 70);
+    border-radius: 5px;
+    font-weight: bold;
+    color: #071241;
+}
+
+.category4 {
+    background-color: rgb(139, 50, 44);
+    border-radius: 5px;
+    font-weight: bold;
+    color: #071241;
+} */
