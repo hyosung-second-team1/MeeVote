@@ -205,11 +205,20 @@ public class ScheduleController {
 		return new BaseResponse(SuccessInfo.OUT_SCHEDULE);
 	}
 
-	@Operation(summary = "일정에 회원 초대하기(미완)")
+	@Operation(summary = "일정에 회원 초대하기")
+	@ApiResponse(responseCode = "1", description = "성공")
+	@ApiResponse(responseCode = "2", description = "실패",
+			content = @Content(examples = {
+					@ExampleObject(name = "일정 소유자가 아님", value = "{\"isSuccess\": false, \"code\": \"S98\", \"message\": \"해당 일정의 소유자가 아닙니다.\"}"),
+					@ExampleObject(name = "존재하지 않는 회원", value = "{\"isSuccess\": false, \"code\": \"B01\", \"message\": \"존재하지 않는 회원입니다.\"}"),
+					@ExampleObject(name = "이미 존재하는 회원", value = "{\"isSuccess\": false, \"code\": \"B00\", \"message\": \"이미 존재하는 회원입니다.\"}"),
+					@ExampleObject(name = "인증되지않은 요청", value = "{\"isSuccess\": false, \"code\": \"Z97\", \"message\": \"인증되지않은 요청입니다.\"}"),
+					@ExampleObject(name = "내부 서버 오류", value = "{\"isSuccess\": false, \"code\": \"Z99\", \"message\": \"서버 오류가 발생했습니다.\"}")
+			}))
 	@PostMapping("/invite")
 	public BaseResponse inviteMember(InviteMemberDto inviteMemberDto){
-		// 한명씩 초대
-		return null;
+		scheduleService.inviteMember(inviteMemberDto);
+		return new BaseResponse(SuccessInfo.INVITE_GROUP_SCHEDULE);
 	}
 
 

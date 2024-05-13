@@ -117,17 +117,18 @@
 		)
 	</insert>
 
-	<select id="isExistGroupMember" parameterType="today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto" resultType="int">
+	<select id="isExistGroupMember" parameterType="list" resultType="int">
 		SELECT COUNT(*) FROM member
 		<where>
-			<if test="inviteEmailList != null and !inviteEmailList.isEmpty()">
+			<if test="list != null and !list.isEmpty()">
 				email IN
-				<foreach collection="inviteEmailList" item="email" index="index" open="(" separator="," close=")">
-					#{email}
+				<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+					#{item}
 				</foreach>
 			</if>
 		</where>
 	</select>
+
 
 	<insert id="createGroupSchedule" parameterType="map">
 		INSERT INTO Schedule (
@@ -309,5 +310,43 @@
 		</if>
 	</select>
 
+	<select id="isOwner">
+		SELECT COUNT(*)
+		FROM member m
+				 JOIN member_schedule ms ON m.email = ms.email
+				 JOIN schedule s ON s.schedule_id = ms.schedule_id
+		WHERE m.email = #{email}
+		  AND s.is_group = 1
+		  AND ms.schedule_id = #{scheduleId}
+	</select>
+
+	<select id="findRegisteredEmails" resultType="string">
+		SELECT email
+		FROM member
+		WHERE email IN
+		<foreach collection="emails" item="email" separator="," open="(" close=")">
+			#{email}
+		</foreach>
+	</select>
+
+	<select id="findExistingMembers" parameterType="map" resultType="string">
+		SELECT ms.email
+		FROM member m
+			JOIN member_schedule ms ON m.email = ms.email
+		WHERE ms.schedule_id = #{scheduleId}
+		AND m.email IN
+		<foreach collection="emails" item="email" separator="," open="(" close=")">
+			#{email}
+		</foreach>
+	</select>
+
+	<insert id="inviteMember">
+		INSERT ALL
+		<foreach collection="inviteMemberDto.inviteEmailList" item="email" separator=" ">
+			INTO member_schedule (schedule_id, email, is_owner)
+			VALUES (#{scheduleId}, #{email}, 0)
+		</foreach>
+		SELECT * FROM DUAL
+	</insert>
 
 </mapper>

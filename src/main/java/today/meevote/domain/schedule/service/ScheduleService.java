@@ -15,9 +15,11 @@ import today.meevote.contextholder.MemberContextHolder;
 import today.meevote.domain.schedule.dao.ScheduleDao;
 import today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto;
 import today.meevote.domain.schedule.dto.request.CreatePersonalScheduleDto;
+import today.meevote.domain.schedule.dto.request.InviteMemberDto;
 import today.meevote.domain.schedule.dto.response.*;
 import today.meevote.domain.voting_schedule.dto.response.VotingScheduleInfoDto;
 import today.meevote.exception.rest.RestException;
+import today.meevote.response.BaseResponse;
 import today.meevote.response.FailureInfo;
 import today.meevote.utils.DateUtil;
 
@@ -78,7 +80,7 @@ public class ScheduleService {
         emailSet.remove(email);
         createGroupScheduleDto.setInviteEmailList(new ArrayList<>(emailSet));
 
-        if (scheduleDao.isExistGroupMember(createGroupScheduleDto) != createGroupScheduleDto.getInviteEmailList().size()
+        if (scheduleDao.isExistGroupMember(createGroupScheduleDto.getInviteEmailList()) != createGroupScheduleDto.getInviteEmailList().size()
                 || !scheduleDao.isExistByEmail(email)
         ) throw new RestException(FailureInfo.NOT_EXIST_MEMBER);
 
@@ -131,5 +133,26 @@ public class ScheduleService {
         List<GetScheduleListDto> schedules = scheduleDao.getPastScheduleList(email, categoryId, keyword, pageable);
         int total = scheduleDao.countPastScheduleList(categoryId, keyword);
         return new PageImpl<>(schedules, pageable, total);
+    }
+
+    public void inviteMember(InviteMemberDto inviteMemberDto) {
+        String email = MemberContextHolder.getEmail();
+
+        Set<String> emailSet = new HashSet<>(inviteMemberDto.getInviteEmailList());
+        emailSet.remove(email);
+        inviteMemberDto.setInviteEmailList(new ArrayList<>(emailSet));
+        List<String> registeredEmails = scheduleDao.findRegisteredEmails(emailSet);
+        List<String> existingEmails = scheduleDao.findExistingMembers(inviteMemberDto.getScheduleId(), emailSet);
+
+        if (!scheduleDao.isOwner(email, inviteMemberDto.getScheduleId()))
+            throw new RestException(FailureInfo.NOT_SCHEDULE_OWNER);
+
+        if (registeredEmails.size() != emailSet.size()) {
+            throw new RestException(FailureInfo.NOT_EXIST_MEMBER);
+        }
+
+        if (!existingEmails.isEmpty())
+            throw new RestException(FailureInfo.ALREADY_EXIST_MEMBER);
+        scheduleDao.inviteMember(inviteMemberDto.getScheduleId(), inviteMemberDto);
     }
 }

@@ -3,6 +3,7 @@ package today.meevote.domain.schedule.dao;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto;
 import today.meevote.domain.schedule.dto.request.CreatePersonalScheduleDto;
+import today.meevote.domain.schedule.dto.request.InviteMemberDto;
 import today.meevote.domain.schedule.dto.response.*;
 
 @Mapper
@@ -45,11 +47,9 @@ public interface ScheduleDao {
 
 	public void createGroupSchedule(Map<String, Object> dto);
 
-	public void createOwnerMemberSchedule(Map<String, Object> dto);
-
 	public void createGroupMemberSchedule(Map<String, Object> dto);
 
-	public int isExistGroupMember(CreateGroupScheduleDto createGroupScheduleDto);
+	public int isExistGroupMember(List<String> inviteEmailList);
 
     public Optional<ScheduleDetailInfoDto> getScheduleDetailInfoDto(String email, long scheduleId);
 
@@ -63,4 +63,13 @@ public interface ScheduleDao {
 	public List<GetScheduleListDto> getPastScheduleList(String email, long categoryId, String keyword, Pageable pageable);
 
 	public int countPastScheduleList(long categoryId, String keyword);
+
+	public boolean isOwner(String email, long scheduleId);
+
+
+	public List<String> findRegisteredEmails(Set<String> emails);
+
+	public List<String> findExistingMembers(long scheduleId, Set<String> emails);
+
+	public void inviteMember(long scheduleId, InviteMemberDto inviteMemberDto);
 }
