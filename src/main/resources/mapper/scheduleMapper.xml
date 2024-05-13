@@ -155,17 +155,15 @@
 		</selectKey>
 	</insert>
 
-	<insert id="createOwnerMemberSchedule" parameterType="map">
-		INSERT INTO member_schedule (schedule_id, email, is_owner)
-		VALUES (#{id}, #{ownerEmail}, 1)
-	</insert>
-
 	<insert id="createGroupMemberSchedule">
 		INSERT ALL
 		<foreach collection="dto.inviteEmailList" item="email" separator=" ">
 			INTO member_schedule (schedule_id, email, is_owner)
 			VALUES (#{id}, #{email}, 0)
 		</foreach>
+		<!-- 모임장용 insert -->
+		INTO member_schedule (schedule_id, email, is_owner)
+		VALUES (#{id}, #{ownerEmail}, 1)
 		SELECT * FROM DUAL
 	</insert>
 
@@ -194,7 +192,7 @@
 		  AND s.schedule_id = #{scheduleId}
 		  AND (
 		      s.is_group = 0 OR
-		      (s.is_group != 0 AND s.vote_deadline &lt; CURRENT_DATE))
+		      (s.is_group = 1 AND sp.schedule_id IS NOT NULL))
 	</select>
 
 	<select id="getScheduleMemberDtoList">
@@ -233,8 +231,7 @@
 			ms.email = #{email}
 			AND (
 				(s.is_group = 0)
-				OR (s.is_group = 1 AND sp.schedule_id IS NOT NULL
-						AND s.vote_deadline &lt; CURRENT_DATE))
+				OR (s.is_group = 1 AND sp.schedule_id IS NOT NULL)
 			AND s.start_date &gt; CURRENT_DATE  -- 모임 시작일은 현재 시각보다 미래
 		ORDER BY
 			s.start_date ASC,  -- 가장 가까운 미래 순서로 정렬하기~
@@ -296,7 +293,7 @@
 			(s.rnum BETWEEN #{pageable.offset} + 1 AND #{pageable.offset} + #{pageable.pageSize})
 		AND (
 			(s.is_group = 0)
-			OR (s.is_group = 1 AND sp.schedule_id IS NOT NULL AND s.vote_deadline &lt; CURRENT_DATE))
+			OR (s.is_group = 1 AND sp.schedule_id IS NOT NULL))
 		ORDER BY s.rnum
 	</select>
 

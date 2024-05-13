@@ -1,9 +1,6 @@
 package today.meevote.domain.schedule.service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -73,16 +70,21 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void createGroupSchedule(CreateGroupScheduleDto createGroupScheduleDto) {
+    public long createGroupSchedule(CreateGroupScheduleDto createGroupScheduleDto) {
         String email = MemberContextHolder.getEmail();
+
+        // 세션의 email 제거
+        Set<String> emailSet = new HashSet<>(createGroupScheduleDto.getInviteEmailList());
+        emailSet.remove(email);
+        createGroupScheduleDto.setInviteEmailList(new ArrayList<>(emailSet));
+
         if (scheduleDao.isExistGroupMember(createGroupScheduleDto) != createGroupScheduleDto.getInviteEmailList().size()
                 || !scheduleDao.isExistByEmail(email)
-        ) {
-            throw new RestException(FailureInfo.NOT_EXIST_MEMBER);
-        }
-        if (!scheduleDao.isCategoryExist(createGroupScheduleDto.getScheduleCategoryId())) {
+        ) throw new RestException(FailureInfo.NOT_EXIST_MEMBER);
+
+        if (!scheduleDao.isCategoryExist(createGroupScheduleDto.getScheduleCategoryId()))
             throw new RestException(FailureInfo.NOT_EXIST_CATEGORY);
-        }
+
         DateUtil.validateDateOrder(
                 createGroupScheduleDto.getStartDate(),
                 createGroupScheduleDto.getEndDate(),
@@ -92,8 +94,8 @@ public class ScheduleService {
         params.put("dto", createGroupScheduleDto);
         params.put("ownerEmail", email);
         scheduleDao.createGroupSchedule(params);
-        scheduleDao.createOwnerMemberSchedule(params);
         scheduleDao.createGroupMemberSchedule(params);
+        return (long) params.get("id");
     }
 
     public GetScheduleDetailDto getScheduleDetail(long scheduleId) {

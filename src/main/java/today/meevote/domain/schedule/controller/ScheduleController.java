@@ -24,7 +24,10 @@ import today.meevote.response.SuccessInfo;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -122,9 +125,12 @@ public class ScheduleController {
 					@ExampleObject(name = "내부 서버 오류", value = "{\"isSuccess\": false, \"code\": \"Z99\", \"message\": \"서버 오류가 발생했습니다.\"}")
 			}))
 	@PostMapping("/group")
-	public BaseResponse createGroupSchedule(@Valid @RequestBody CreateGroupScheduleDto createGroupScheduleDto){
-		scheduleService.createGroupSchedule(createGroupScheduleDto);
-		return new BaseResponse(SuccessInfo.CREATE_GROUP_SCHEDULE);
+	public DataResponse<Map> createGroupSchedule(@Valid @RequestBody CreateGroupScheduleDto createGroupScheduleDto){
+		long scheduleId = scheduleService.createGroupSchedule(createGroupScheduleDto);
+		Map<String, Object> responseMap = new HashMap<>();
+		responseMap.put("scheduleId", scheduleId);
+
+		return new DataResponse(SuccessInfo.CREATE_GROUP_SCHEDULE, responseMap);
 	}
 
 	@Operation(summary = "일정 상세조회")
