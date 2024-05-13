@@ -230,12 +230,13 @@
 				LEFT JOIN schedule_place sp ON s.schedule_id = sp.schedule_id
 		WHERE
 			ms.email = #{email}
-			AND (
-				(s.is_group = 0)
+		  AND (
+					s.is_group = 0
 				OR (s.is_group = 1 AND sp.schedule_id IS NOT NULL)
-			AND s.start_date &gt; CURRENT_DATE  -- 모임 시작일은 현재 시각보다 미래
+			)
+		  AND s.start_date &gt; CURRENT_DATE
 		ORDER BY
-			s.start_date ASC,  -- 가장 가까운 미래 순서로 정렬하기~
+			s.start_date ASC,
 			s.name ASC
 	</select>
 
