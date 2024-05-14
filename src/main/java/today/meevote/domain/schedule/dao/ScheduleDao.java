@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import org.springframework.data.domain.Pageable;
+import today.meevote.domain.schedule.dto.request.CreateGroupScheduleDto;
 import today.meevote.domain.schedule.dto.request.InviteMemberDto;
 import today.meevote.domain.schedule.dto.response.*;
 
@@ -43,6 +44,8 @@ public interface ScheduleDao {
     public void createSchedulePlace(Map<String, Object> dto);
 
 	public void createGroupSchedule(Map<String, Object> dto);
+
+	public boolean isValidateDate(@Param("createGroupScheduleDto") CreateGroupScheduleDto createGroupScheduleDto);
 
 	public void createGroupMemberSchedule(Map<String, Object> dto);
 

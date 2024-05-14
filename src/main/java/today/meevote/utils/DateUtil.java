@@ -34,7 +34,7 @@ public class DateUtil {
             Date startDate = getDateFormat().parse(startDateStr);
             Date endDate = getDateFormat().parse(endDateStr);
             Date voteDate = getDateFormat().parse(voteDateStr);
-            if (!startDate.before(endDate)) {
+            if (!startDate.before(endDate) || !voteDate.before(startDate)) {
                 throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
             }
         } catch (ParseException e) {

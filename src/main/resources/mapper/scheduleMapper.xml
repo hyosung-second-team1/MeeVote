@@ -129,6 +129,14 @@
 		</where>
 	</select>
 
+	<select id="isValidateDate" resultType="boolean">
+		SELECT COUNT(*)
+		FROM DUAL
+		WHERE TO_DATE(#{createGroupScheduleDto.startDate}, 'YYYY-MM-DD HH24:MI') &gt; SYSDATE
+		  AND TO_DATE(#{createGroupScheduleDto.endDate}, 'YYYY-MM-DD HH24:MI') &gt; TO_DATE(#{createGroupScheduleDto.startDate}, 'YYYY-MM-DD HH24:MI')
+		  AND TO_DATE(#{createGroupScheduleDto.voteDeadline}, 'YYYY-MM-DD HH24:MI') &lt; TO_DATE(#{createGroupScheduleDto.startDate}, 'YYYY-MM-DD HH24:MI')
+		  AND TO_DATE(#{createGroupScheduleDto.voteDeadline}, 'YYYY-MM-DD HH24:MI') &gt; SYSDATE
+	</select>
 
 	<insert id="createGroupSchedule" parameterType="map">
 		INSERT INTO Schedule (

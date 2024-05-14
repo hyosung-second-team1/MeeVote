@@ -82,6 +82,9 @@ public class ScheduleService {
         emailSet.remove(email);
         createGroupScheduleDto.setInviteEmailList(new ArrayList<>(emailSet));
 
+        if(!scheduleDao.isValidateDate(createGroupScheduleDto))
+            throw new RestException(FailureInfo.INVALID_DATE_FORMAT);
+
         if (scheduleDao.isExistGroupMember(createGroupScheduleDto.getInviteEmailList()) != createGroupScheduleDto.getInviteEmailList().size()
                 || !scheduleDao.isExistByEmail(email)
         ) throw new RestException(FailureInfo.NOT_EXIST_MEMBER);
