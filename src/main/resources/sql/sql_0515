@@ -1,0 +1,12 @@
+-- 컬럼 길이 줄이기
+ALTER TABLE place_to_vote MODIFY place_name NVARCHAR2(1000);
+ALTER TABLE place_to_vote MODIFY lat NVARCHAR2(1000);
+ALTER TABLE place_to_vote MODIFY lng NVARCHAR2(1000);
+
+-- 복합 유니크 인덱스 생성
+CREATE UNIQUE INDEX uq_place_to_vote
+ON place_to_vote (schedule_id, lat, lng);
+
+-- place_to_vote 테이블에 새로운 유니크 제약 조건을 추가
+ALTER TABLE place_to_vote
+ADD CONSTRAINT uq_place_to_vote UNIQUE (schedule_id, lat, lng);

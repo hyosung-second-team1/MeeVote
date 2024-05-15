@@ -1,6 +1,7 @@
 package today.meevote.domain.voting_schedule.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import today.meevote.contextholder.MemberContextHolder;
@@ -11,6 +12,7 @@ import today.meevote.domain.voting_schedule.dto.response.*;
 import today.meevote.exception.rest.RestException;
 import today.meevote.response.FailureInfo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -57,10 +59,13 @@ public class VotingScheduleService {
         if(!votingScheduleDao.isExistMemberSchedule(email, scheduleId))
             throw new RestException(FailureInfo.NOT_EXIST_MEMBER_SCHEDULE);
 
-        if(votingScheduleDao.isDuplicatePlaceToVote(scheduleId, addPlaceToVoteDto))
+        // SQLException - 동시성 제어 / 유니크 키 제약 조건 위반 처리
+        try {
+            votingScheduleDao.addPlaceToVote(scheduleId, addPlaceToVoteDto);
+        } catch (DuplicateKeyException e) {
+            // ORA-00001: unique 키 위배
             throw new RestException(FailureInfo.ALREADY_EXIST_PLACE_TO_VOTE);
-
-        votingScheduleDao.addPlaceToVote(scheduleId, addPlaceToVoteDto);
+        }
     }
 
     public void toggleVotePlace(long placeToVoteId) {
