@@ -35,6 +35,7 @@
             LEFT JOIN schedule_place sp ON n.schedule_id = sp.schedule_id
         WHERE
             n.email = #{email}
+            AND n.is_read = 0
         ORDER BY n.is_read ASC, n.notify_id DESC
     </select>
 
